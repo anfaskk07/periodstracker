@@ -1,0 +1,1704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RituCare Kerala — Period Date & Daily Kerala Diet Tracker (V1)</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    .day-pill::-webkit-scrollbar {
+      height: 6px;
+    }
+    .day-pill::-webkit-scrollbar-thumb {
+      background: #fda4af;
+      border-radius: 9999px;
+    }
+  </style>
+</head>
+<body class="bg-rose-50/50 text-slate-800 min-h-screen flex flex-col">
+
+  <!-- Top Header -->
+  <header class="bg-white border-b border-rose-100 sticky top-0 z-20 shadow-sm">
+    <div class="max-w-5xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-rose-600 text-white flex items-center justify-center font-bold text-lg shadow-sm">
+          🌸
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 id="appTitle" class="text-lg sm:text-xl font-bold text-slate-900">RituCare Kerala</h1>
+            <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">Step 3 • Complete App V3</span>
+          </div>
+          <p id="appSubtitle" class="text-xs text-slate-500">Period Date, Body Metrics & Daily Kerala Food/Fruit/Water Tracker</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button id="langToggleBtn" type="button" class="text-xs font-medium px-3 py-1.5 rounded-lg border border-rose-200 bg-rose-50 text-rose-800 hover:bg-rose-100 transition">
+          🗣️ ഭാഷ: English + മലയാളം
+        </button>
+        <button id="resetDemoBtn" type="button" class="text-xs font-medium px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition">
+          ↻ Reset Sample
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-5xl mx-auto w-full px-4 py-6 space-y-6 flex-1">
+
+    <!-- Toast Notification -->
+    <div id="toastBanner" class="hidden rounded-xl bg-emerald-600 text-white px-4 py-2.5 text-sm font-medium shadow-md flex items-center justify-between">
+      <span id="toastText">Profile updated!</span>
+      <button id="closeToastBtn" type="button" class="text-white/80 hover:text-white text-xs font-bold ml-4">✕</button>
+    </div>
+
+    <!-- SECTION 1: USER INPUT FORM (Weight, Height, Age, Period Date) -->
+    <section class="bg-white rounded-2xl border border-rose-100 shadow-sm p-5">
+      <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+        <div>
+          <h2 id="profileHeading" class="text-base font-bold text-slate-900 flex items-center gap-2">
+            <span>1. Your Body & Period Details</span>
+            <span class="text-xs font-normal text-slate-500">(ശരീര അളവുകളും പീരിയഡ് തിയതിയും)</span>
+          </h2>
+          <p id="profileSubtext" class="text-xs text-slate-500 mt-0.5">
+            Enter your age, weight, height, and last period date to calculate your cycle dates and exact food/water quantities.
+          </p>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-xs text-slate-500">Diet Style:</span>
+          <select id="dietTypeSelect" aria-label="Diet Style" class="text-xs font-medium rounded-lg border border-slate-200 px-2.5 py-1.5 bg-slate-50 text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-500">
+            <option value="all">Kerala Standard (Veg + Egg/Fish)</option>
+            <option value="veg">Pure Vegetarian (സസ്യാഹാരം)</option>
+          </select>
+        </div>
+      </div>
+
+      <form id="trackerForm" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+        <div>
+          <label for="ageInput" class="block text-xs font-semibold text-slate-700 mb-1">
+            Age (വയസ്സ്)
+          </label>
+          <div class="relative">
+            <input id="ageInput" type="number" min="10" max="60" value="20" required
+              class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-rose-500" />
+            <span class="absolute right-3 top-2 text-xs text-slate-400">yrs</span>
+          </div>
+        </div>
+
+        <div>
+          <label for="weightInput" class="block text-xs font-semibold text-slate-700 mb-1">
+            Weight (ഭാരം - kg)
+          </label>
+          <div class="relative">
+            <input id="weightInput" type="number" min="25" max="150" step="0.5" value="52" required
+              class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-rose-500" />
+            <span class="absolute right-3 top-2 text-xs text-slate-400">kg</span>
+          </div>
+        </div>
+
+        <div>
+          <label for="heightInput" class="block text-xs font-semibold text-slate-700 mb-1">
+            Height (ഉയരം - cm)
+          </label>
+          <div class="relative">
+            <input id="heightInput" type="number" min="110" max="210" value="158" required
+              class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-rose-500" />
+            <span class="absolute right-3 top-2 text-xs text-slate-400">cm</span>
+          </div>
+        </div>
+
+        <div>
+          <label for="lastPeriodInput" class="block text-xs font-semibold text-slate-700 mb-1">
+            Last Period Start (കഴിഞ്ഞ പീരിയഡ്)
+          </label>
+          <input id="lastPeriodInput" type="date" required
+            class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-rose-500" />
+        </div>
+
+        <div>
+          <label for="cycleLengthInput" class="block text-xs font-semibold text-slate-700 mb-1">
+            Cycle Length (സൈക്കിൾ ദിവസങ്ങൾ)
+          </label>
+          <div class="flex items-center gap-2">
+            <input id="cycleLengthInput" type="number" min="21" max="40" value="28" required
+              class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-rose-500" />
+            <button id="calculateBtn" type="submit"
+              class="shrink-0 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-semibold text-xs px-3.5 py-2.5 shadow-sm transition">
+              Update
+            </button>
+          </div>
+        </div>
+      </form>
+    </section>
+
+    <!-- SECTION 2: LIVE SUMMARY CARDS (Cycle Prediction, BMI/Calories, Daily Water Tracker) -->
+    <section class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <!-- Card 1: Cycle & Next Period Date -->
+      <div class="bg-white rounded-2xl border border-rose-100 shadow-sm p-4 flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold uppercase tracking-wider text-rose-600">Cycle Tracker</span>
+            <span id="currentPhaseBadge" class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-rose-100 text-rose-700">
+              Menstrual Phase
+            </span>
+          </div>
+          <div class="mt-3 flex items-baseline gap-2">
+            <h3 id="cycleDayDisplay" class="text-2xl font-bold text-slate-900">Day 3</h3>
+            <span id="cycleTotalDisplay" class="text-xs text-slate-500">of 28-day cycle</span>
+          </div>
+          <p id="phaseSummaryText" class="text-xs text-slate-600 mt-1">
+            Iron & warm comfort foods needed to replenish blood loss.
+          </p>
+        </div>
+
+        <div class="mt-4 pt-3 border-t border-slate-100 grid grid-cols-2 gap-2 text-xs">
+          <div class="bg-rose-50/70 rounded-xl p-2.5">
+            <span class="text-slate-500 block">Next Period Date</span>
+            <strong id="nextPeriodDateDisplay" class="text-rose-700 font-bold text-sm">--</strong>
+            <span id="daysUntilNextDisplay" class="text-[11px] text-slate-500 block mt-0.5">--</span>
+          </div>
+          <div class="bg-amber-50/70 rounded-xl p-2.5">
+            <span class="text-slate-500 block">Ovulation Window</span>
+            <strong id="ovulationDateDisplay" class="text-amber-800 font-bold text-sm">--</strong>
+            <span class="text-[11px] text-slate-500 block mt-0.5">Peak energy days</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2: Weight, Height & Age Personalized Nutrition Target -->
+      <div class="bg-white rounded-2xl border border-rose-100 shadow-sm p-4 flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold uppercase tracking-wider text-emerald-700">Body & Portion Scale</span>
+            <span id="bmiBadge" class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
+              BMI: 20.8 (Normal)
+            </span>
+          </div>
+          <div class="mt-3 flex items-baseline gap-2">
+            <h3 id="calorieTargetDisplay" class="text-2xl font-bold text-slate-900">1,820 kcal</h3>
+            <span class="text-xs text-slate-500">daily target</span>
+          </div>
+          <p id="portionNoteDisplay" class="text-xs text-slate-600 mt-1">
+            Quantities below are scaled for 52 kg, 158 cm, age 20.
+          </p>
+        </div>
+
+        <div class="mt-4 pt-3 border-t border-slate-100 grid grid-cols-3 gap-2 text-center text-xs">
+          <div class="bg-slate-50 rounded-xl p-2">
+            <span class="text-slate-500 block text-[11px]">Protein</span>
+            <strong id="proteinTargetDisplay" class="text-slate-800 font-bold">58g/day</strong>
+          </div>
+          <div class="bg-slate-50 rounded-xl p-2">
+            <span class="text-slate-500 block text-[11px]">Iron Focus</span>
+            <strong id="ironTargetDisplay" class="text-rose-700 font-bold">High (18mg)</strong>
+          </div>
+          <div class="bg-slate-50 rounded-xl p-2">
+            <span class="text-slate-500 block text-[11px]">Fruits</span>
+            <strong id="fruitTargetDisplay" class="text-emerald-700 font-bold">250g/day</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3: Interactive Kerala Water & Hydration Tracker -->
+      <div class="bg-white rounded-2xl border border-rose-100 shadow-sm p-4 flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold uppercase tracking-wider text-sky-700">Daily Water Intake (വെള്ളം)</span>
+            <span id="waterTargetBadge" class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-sky-100 text-sky-800">
+              Target: 2.2 L (9 glasses)
+            </span>
+          </div>
+
+          <div class="mt-3 flex items-center justify-between">
+            <div>
+              <h3 id="waterCountDisplay" class="text-2xl font-bold text-slate-900">0 / 9 Glasses</h3>
+              <p id="waterMlDisplay" class="text-xs text-slate-500">0 ml logged today (1 glass = 250 ml)</p>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <button id="waterMinusBtn" type="button" aria-label="Remove 1 glass of water"
+                class="w-8 h-8 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-base flex items-center justify-center transition">
+                −
+              </button>
+              <button id="waterPlusBtn" type="button" aria-label="Add 1 glass of water"
+                class="px-3 h-8 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-semibold text-xs flex items-center gap-1 shadow-sm transition">
+                + 1 Glass
+              </button>
+            </div>
+          </div>
+
+          <!-- Visual Water Glasses Grid -->
+          <div id="waterGlassesContainer" class="mt-3 flex flex-wrap gap-1.5"></div>
+        </div>
+
+        <div class="mt-3 pt-2.5 border-t border-slate-100 text-[11px] text-slate-600 flex items-center justify-between">
+          <span>🌿 Tip: Include <strong>Jeeraka Vellam</strong>, <strong>Karikku</strong> &amp; <strong>Sambharam</strong></span>
+          <button id="resetWaterBtn" type="button" class="text-sky-700 hover:underline font-medium">Reset</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: DAY-BY-DAY KERALA FOOD, FRUIT & QUANTITY PLANNER -->
+    <section class="bg-white rounded-2xl border border-rose-100 shadow-sm p-5 space-y-5">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
+            <span>2. Day-by-Day Kerala Food, Fruits &amp; Water Plan</span>
+            <span class="text-xs font-normal text-slate-500">(ഓരോ ദിവസവും കഴിക്കേണ്ട ഭക്ഷണവും അളവും)</span>
+          </h2>
+          <p class="text-xs text-slate-500 mt-0.5">
+            Click any cycle day below to inspect that day's Kerala meals, local fruits, and exact gram/cup quantities.
+          </p>
+        </div>
+
+        <!-- Day Navigation Controls -->
+        <div class="flex items-center gap-1.5">
+          <button id="prevDayBtn" type="button" class="px-2.5 py-1.5 rounded-lg border border-slate-200 text-xs font-medium text-slate-700 hover:bg-slate-50">
+            ← Prev Day
+          </button>
+          <button id="jumpTodayBtn" type="button" class="px-3 py-1.5 rounded-lg bg-rose-100 text-rose-800 text-xs font-semibold hover:bg-rose-200">
+            Today's Cycle Day
+          </button>
+          <button id="nextDayBtn" type="button" class="px-2.5 py-1.5 rounded-lg border border-slate-200 text-xs font-medium text-slate-700 hover:bg-slate-50">
+            Next Day →
+          </button>
+        </div>
+      </div>
+
+      <!-- Phase Quick Filter Tabs -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+        <button type="button" data-phase-start="1" class="phase-jump-btn text-left p-2.5 rounded-xl border border-rose-200 bg-rose-50/70 hover:bg-rose-100/80 transition">
+          <div class="text-xs font-bold text-rose-800">🩸 Days 1–5: Menstrual</div>
+          <div class="text-[11px] text-rose-600">Iron, Warm Kanji, Muringayila, Sharkara</div>
+        </button>
+        <button type="button" data-phase-start="6" class="phase-jump-btn text-left p-2.5 rounded-xl border border-emerald-200 bg-emerald-50/70 hover:bg-emerald-100/80 transition">
+          <div class="text-xs font-bold text-emerald-800">🌱 Days 6–13: Follicular</div>
+          <div class="text-[11px] text-emerald-600">Appam, Cherupayar, Peraikka, Fish/Soya</div>
+        </button>
+        <button type="button" data-phase-start="14" class="phase-jump-btn text-left p-2.5 rounded-xl border border-amber-200 bg-amber-50/70 hover:bg-amber-100/80 transition">
+          <div class="text-xs font-bold text-amber-800">☀️ Days 14–16: Ovulation</div>
+          <div class="text-[11px] text-amber-700">Avial, Sambharam, Watermelon, Karikku</div>
+        </button>
+        <button type="button" data-phase-start="17" class="phase-jump-btn text-left p-2.5 rounded-xl border border-purple-200 bg-purple-50/70 hover:bg-purple-100/80 transition">
+          <div class="text-xs font-bold text-purple-800">🌙 Days 17–28+: Luteal</div>
+          <div class="text-[11px] text-purple-600">Ragi Puttu, Nendran Pazham, Cheera, Ellunda</div>
+        </button>
+      </div>
+
+      <!-- Horizontal Day Selector Strip (1 to Cycle Length) -->
+      <div id="daySelectorStrip" class="day-pill flex items-center gap-1.5 overflow-x-auto pb-2 pt-1"></div>
+
+      <!-- Selected Day Banner -->
+      <div id="selectedDayBanner" class="rounded-2xl bg-gradient-to-r from-rose-600 to-rose-500 text-white p-4 flex flex-wrap items-center justify-between gap-4 shadow-sm">
+        <div>
+          <div class="flex items-center gap-2">
+            <span id="selectedDayNumberBadge" class="text-xs font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-white/20">
+              Cycle Day 3
+            </span>
+            <span id="selectedDayDateText" class="text-xs text-rose-100">Sunday, 18 Oct</span>
+          </div>
+          <h3 id="selectedDayPhaseTitle" class="text-lg font-bold mt-1">
+            Menstrual Phase — Iron &amp; Cramp Relief Kerala Menu
+          </h3>
+          <p id="selectedDayNutrientFocus" class="text-xs text-rose-100 mt-0.5">
+            Focus: Replenish iron with Muringayila (drumstick leaves), Sharkara (jaggery), and warm digestible meals.
+          </p>
+        </div>
+
+        <div class="bg-white/15 backdrop-blur-sm rounded-xl px-3.5 py-2 text-right">
+          <span class="text-[11px] text-rose-100 block">Meals Checked Off</span>
+          <strong id="mealCompletionText" class="text-base font-bold">0 / 6 Completed</strong>
+        </div>
+      </div>
+
+      <!-- 6 Daily Meal & Fruit Cards -->
+      <div id="mealsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+    </section>
+
+    <!-- SECTION 3B: VISUAL MONTHLY PERIOD & FERTILITY CALENDAR (Step 2 Addition) -->
+    <section class="bg-white rounded-2xl border border-rose-100 shadow-sm p-5 space-y-4">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
+            <span>3. Monthly Period &amp; Cycle Phase Calendar</span>
+            <span class="text-xs font-normal text-slate-500">(മാസ കലണ്ടർ - പീരിയഡ് &amp; ഓവുലേഷൻ തിയതികൾ)</span>
+          </h2>
+          <p class="text-xs text-slate-500 mt-0.5">
+            Click any date in the calendar to jump to that cycle day's Kerala meal plan and log symptoms.
+          </p>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button id="prevMonthBtn" type="button" class="px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition">
+            ← Prev Month
+          </button>
+          <span id="calendarMonthLabel" class="text-sm font-bold text-slate-900 min-w-[130px] text-center">
+            October 2026
+          </span>
+          <button id="nextMonthBtn" type="button" class="px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition">
+            Next Month →
+          </button>
+          <button id="currentMonthBtn" type="button" class="px-2.5 py-1.5 rounded-lg bg-rose-50 text-rose-700 border border-rose-200 text-xs font-semibold hover:bg-rose-100 transition">
+            This Month
+          </button>
+        </div>
+      </div>
+
+      <!-- Color Legend -->
+      <div class="flex flex-wrap items-center gap-3 text-xs pt-1">
+        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-rose-100 text-rose-800 font-medium">
+          <span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span> Period Days (Days 1–5)
+        </span>
+        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 font-medium">
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Follicular Phase
+        </span>
+        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 font-medium">
+          <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> Ovulation Window
+        </span>
+        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-purple-100 text-purple-800 font-medium">
+          <span class="w-2.5 h-2.5 rounded-full bg-purple-500"></span> Luteal Phase
+        </span>
+      </div>
+
+      <!-- Weekday Headers -->
+      <div class="grid grid-cols-7 gap-1.5 text-center text-[11px] font-bold uppercase tracking-wider text-slate-400 pt-1">
+        <div>Sun</div>
+        <div>Mon</div>
+        <div>Tue</div>
+        <div>Wed</div>
+        <div>Thu</div>
+        <div>Fri</div>
+        <div>Sat</div>
+      </div>
+
+      <!-- Calendar Days Grid -->
+      <div id="calendarDaysGrid" class="grid grid-cols-7 gap-1.5"></div>
+    </section>
+
+    <!-- SECTION 3C: DAILY SYMPTOM LOGGER & KERALA HOME REMEDIES (Step 2 Addition) -->
+    <section class="bg-white rounded-2xl border border-rose-100 shadow-sm p-5 space-y-4">
+      <div class="flex flex-wrap items-center justify-between gap-2">
+        <div>
+          <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
+            <span>4. Daily Symptom Logger &amp; Instant Kerala Home Remedies</span>
+            <span class="text-xs font-normal text-slate-500">(ശാരീരിക ബുദ്ധിമുട്ടുകളും നാടൻ ഒറ്റമൂലികളും)</span>
+          </h2>
+          <p class="text-xs text-slate-500 mt-0.5">
+            Select how you feel on <strong id="symptomDayLabel" class="text-rose-700">Cycle Day 3</strong> to get traditional Kerala kitchen remedies with exact quantities.
+          </p>
+        </div>
+        <button id="clearSymptomsBtn" type="button" class="text-xs font-medium text-slate-500 hover:text-rose-600 transition">
+          Clear Day's Symptoms
+        </button>
+      </div>
+
+      <!-- Symptom Selection Pills -->
+      <div id="symptomButtonsContainer" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5"></div>
+
+      <!-- Active Remedies Box -->
+      <div id="remedyRecommendationsBox" class="rounded-2xl bg-amber-50/70 border border-amber-200 p-4 space-y-3"></div>
+    </section>
+
+    <!-- SECTION 3D: WEEKLY KERALA GROCERY & MARKET SHOPPING LIST (Step 3 Addition) -->
+    <section class="bg-white rounded-2xl border border-rose-100 shadow-sm p-5 space-y-4">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
+            <span>5. Weekly Kerala Grocery &amp; Market Shopping List</span>
+            <span class="text-xs font-normal text-slate-500">(ആഴ്ചയിലെ പലചരക്ക് &amp; പഴം ലിസ്റ്റ്)</span>
+          </h2>
+          <p class="text-xs text-slate-500 mt-0.5">
+            Auto-calculates the exact kilograms and grams of Kerala grains, greens, fruits, and seeds needed for your chosen cycle week.
+          </p>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <label for="groceryWeekSelect" class="text-xs text-slate-500">Cycle Period:</label>
+          <select id="groceryWeekSelect" class="text-xs font-semibold rounded-lg border border-slate-200 px-3 py-1.5 bg-slate-50 text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-500">
+            <option value="1">Week 1: Menstrual Focus (Days 1–7)</option>
+            <option value="2">Week 2: Follicular Energy (Days 8–14)</option>
+            <option value="3">Week 3: Ovulation &amp; Hydration (Days 15–21)</option>
+            <option value="4">Week 4: Luteal &amp; PMS Care (Days 22–28)</option>
+            <option value="full">Full Month (All 4 Weeks Combined)</option>
+          </select>
+          <button id="copyGroceryBtn" type="button" class="text-xs font-semibold px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition">
+            📋 Copy List
+          </button>
+        </div>
+      </div>
+
+      <!-- Grocery Categories Grid -->
+      <div id="groceryCategoriesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 pt-1"></div>
+    </section>
+
+    <!-- SECTION 3E: CYCLE HISTORY LOG & EXPORT SUMMARY (Step 3 Addition) -->
+    <section class="bg-white rounded-2xl border border-rose-100 shadow-sm p-5 space-y-4">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
+            <span>6. Cycle History &amp; Health Summary Card</span>
+            <span class="text-xs font-normal text-slate-500">(മുൻകാല സൈക്കിൾ റെക്കോർഡുകൾ)</span>
+          </h2>
+          <p class="text-xs text-slate-500 mt-0.5">
+            Save each period cycle to monitor cycle regularity, symptom patterns, and export a printable summary card.
+          </p>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button id="saveCycleRecordBtn" type="button" class="text-xs font-semibold px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-white shadow-sm transition">
+            + Save Current Cycle Record
+          </button>
+          <button id="printSummaryBtn" type="button" class="text-xs font-semibold px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition">
+            🖨️ Print / Save Summary
+          </button>
+        </div>
+      </div>
+
+      <!-- History Table Container -->
+      <div class="overflow-x-auto rounded-xl border border-slate-200">
+        <table class="w-full text-xs text-left text-slate-700">
+          <thead class="bg-slate-50 text-[11px] font-bold uppercase tracking-wider text-slate-500 border-b border-slate-200">
+            <tr>
+              <th class="py-2.5 px-3">Start Date</th>
+              <th class="py-2.5 px-3">Cycle Length</th>
+              <th class="py-2.5 px-3">Predicted Next Period</th>
+              <th class="py-2.5 px-3">Logged Symptoms</th>
+              <th class="py-2.5 px-3">Avg Water</th>
+              <th class="py-2.5 px-3 text-right">Action</th>
+            </tr>
+          </thead>
+          <tbody id="cycleHistoryTableBody" class="divide-y divide-slate-100"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- SECTION 4: BEGINNER CODE WALKTHROUGH (Step 1, 2 & 3 Explanation) -->
+    <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-base font-bold text-slate-900">
+            💻 How Step 1 Works (Beginner Code Breakdown)
+          </h2>
+          <p class="text-xs text-slate-500">
+            Ee app-inte 3 main parts enthokkeyaanu cheyyunnathu ennu nokkaam:
+          </p>
+        </div>
+        <button id="toggleCodeGuideBtn" type="button" class="text-xs font-semibold text-rose-600 hover:text-rose-700 px-3 py-1.5 rounded-lg bg-rose-50">
+          Hide / Show Guide
+        </button>
+      </div>
+
+      <div id="codeGuideContent" class="mt-4 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 text-xs">
+        <div class="rounded-xl bg-slate-50 p-3.5 border border-slate-200/80">
+          <div class="font-bold text-slate-900 mb-1">1. HTML (The Skeleton / ഘടന)</div>
+          <p class="text-slate-600 leading-relaxed">
+            Creates the input boxes (`&lt;input&gt;`) for <strong>Age, Weight, Height, and Last Period Date</strong>, plus the empty card containers where the daily Kerala meals and water glasses appear.
+          </p>
+        </div>
+        <div class="rounded-xl bg-slate-50 p-3.5 border border-slate-200/80">
+          <div class="font-bold text-slate-900 mb-1">2. Tailwind CSS (The Design / ഭംഗി)</div>
+          <p class="text-slate-600 leading-relaxed">
+            Styles the cards with soft rose and green colors, rounded corners (`rounded-2xl`), and responsive grids (`grid-cols-1 md:grid-cols-3`) so it works smoothly on mobile and laptop screens.
+          </p>
+        </div>
+        <div class="rounded-xl bg-slate-50 p-3.5 border border-slate-200/80">
+          <div class="font-bold text-slate-900 mb-1">3. JavaScript (The Brain / ബുദ്ധി)</div>
+          <p class="text-slate-600 leading-relaxed">
+            Calculates BMI, daily water need (`weight × 35 ml`), next period date, and multiplies base Kerala food &amp; fruit quantities (grams/cups) to match your exact body profile.
+          </p>
+        </div>
+        <div class="rounded-xl bg-rose-50/70 p-3.5 border border-rose-200/80">
+          <div class="font-bold text-rose-900 mb-1">4. Step 2: Calendar &amp; Remedies</div>
+          <p class="text-slate-600 leading-relaxed">
+            Uses `new Date(year, month, 1)` to build a 7-column calendar grid, colors each date by cycle phase, and maps logged symptoms to Kerala kitchen remedies (`KERALA_SYMPTOM_REMEDIES`).
+          </p>
+        </div>
+        <div class="rounded-xl bg-emerald-50/70 p-3.5 border border-emerald-200/80">
+          <div class="font-bold text-emerald-900 mb-1">5. Step 3: Grocery &amp; History</div>
+          <p class="text-slate-600 leading-relaxed">
+            Aggregates weekly grain, green, fruit, and seed grams scaled by body weight, and stores multi-cycle records in `localStorage` with print/copy support.
+          </p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    // =========================================================================
+    // 1. KERALA DAILY DIET DATABASE (Authentic Kerala Foods, Fruits & Drinks)
+    // =========================================================================
+    const KERALA_PHASE_INFO = {
+      menstrual: {
+        name: "Menstrual Phase (ആർത്തവ ഘട്ടം)",
+        shortBadge: "Menstrual Phase",
+        colorClass: "bg-rose-100 text-rose-800",
+        bannerGradient: "from-rose-600 to-rose-500",
+        ironFocus: "High (18–20mg)",
+        summaryEn: "Focus on iron-rich Kerala greens (Muringayila, Cheera), jaggery (Sharkara), and warm easily digestible meals.",
+        summaryMl: "രക്തക്കുറവ് പരിഹരിക്കാൻ മുരിങ്ങയില, ചീര, ശർക്കര, ചൂടുള്ള കഞ്ഞി, ജീരകവെള്ളം എന്നിവ ഉൾപ്പെടുത്തുക."
+      },
+      follicular: {
+        name: "Follicular Phase (ഫോളിക്യുലാർ ഘട്ടം)",
+        shortBadge: "Follicular Phase",
+        colorClass: "bg-emerald-100 text-emerald-800",
+        bannerGradient: "from-emerald-600 to-teal-600",
+        ironFocus: "Moderate (15mg)",
+        summaryEn: "Rising energy! Focus on sprouted Cherupayar (green gram), Appam, local Vitamin-C fruits (Peraikka/Guava), and protein.",
+        summaryMl: "ശരീരത്തിന് ഉന്മേഷം കൂടുന്ന സമയം. ചെറുപയർ, അപ്പം, പേരയ്ക്ക, പ്രോട്ടീൻ അടങ്ങിയ ഭക്ഷണങ്ങൾ കഴിക്കുക."
+      },
+      ovulation: {
+        name: "Ovulation Phase (ഓവുലേഷൻ ഘട്ടം)",
+        shortBadge: "Ovulation Phase",
+        colorClass: "bg-amber-100 text-amber-800",
+        bannerGradient: "from-amber-600 to-orange-500",
+        ironFocus: "Moderate (15mg)",
+        summaryEn: "Peak hormone activity & body warmth. Stay cool with Karikku (tender coconut), Sambharam, Avial, and juicy fruits.",
+        summaryMl: "ശരീര താപനില ഉയരുന്ന സമയം. കരിക്ക്, സംഭാരം, അവിയൽ, തണ്ണിമത്തൻ എന്നിവ ധാരാളം ഉൾപ്പെടുത്തുക."
+      },
+      luteal: {
+        name: "Luteal Phase (ല്യൂട്ടിയൽ ഘട്ടം)",
+        shortBadge: "Luteal Phase",
+        colorClass: "bg-purple-100 text-purple-800",
+        bannerGradient: "from-purple-600 to-indigo-600",
+        ironFocus: "High-Mod (16mg)",
+        summaryEn: "Prevent PMS & cramps with Magnesium and Vitamin B6: Ragi Puttu, Nendran Pazham, Cheera Thoran, and Ellunda.",
+        summaryMl: "പി.എം.എസ് (PMS), വയറുവേദന കുറയ്ക്കാൻ റാഗി, നേന്ത്രപ്പഴം, ചീര തോരൻ, എള്ളുണ്ട എന്നിവ കഴിക്കുക."
+      }
+    };
+
+    // Rotating Kerala day menus for each phase so every single day has concrete items & quantities
+    const KERALA_MENUS = {
+      menstrual: [
+        {
+          morningDrink: { item: "Warm Jeeraka Vellam (ജീരക വെള്ളം) + 2 Black Dates (ഈന്തപ്പഴം)", baseMl: 250, baseGrams: 25, benefit: "Eases uterine cramps & boosts morning iron absorption" },
+          breakfast: { item: "Red Rice Puttu (മട്ട അരി പുട്ട്) + Kadala Curry (കടല കറി)", baseGrams: 160, curryGrams: 150, unitDesc: "1 cup Puttu + 1 bowl Kadala", benefit: "Slow-release energy + high plant iron & fiber" },
+          fruits: { item: "Steamed Nendran Pazham (പുഴുങ്ങിയ നേന്ത്രപ്പഴം) + Pomegranate / Mathalam (മാതളം)", baseGrams: 220, unitDesc: "1 medium banana (100g) + 1 cup Mathalam (120g)", benefit: "Potassium stops cramps; Mathalam supports blood building" },
+          lunch: { item: "Matta Rice (മട്ട അരി ചോറ്) + Muringayila Thoran (മുരിങ്ങയില തോരൻ) + Cherupayar Curry + Warm Moru", baseGrams: 160, sideGrams: 120, unitDesc: "1 cup rice + 1 cup drumstick leaves + 1/2 cup dal", benefit: "Muringayila is Kerala's richest natural source of iron & calcium" },
+          evening: { item: "Chukku Kaapi (ചുക്കുകാപ്പി - Dry Ginger Coffee with Palm Jaggery) + Ellunda (എള്ളുണ്ട)", baseMl: 150, baseGrams: 35, unitDesc: "1 cup (150ml) + 1 sesame-jaggery ball (35g)", benefit: "Dry ginger relieves bloating; sesame & Sharkara restore iron" },
+          dinner: { item: "Choodu Matta Kanji (ചൂട് മട്ട കഞ്ഞി) + Cherupayar Thoran (ചെറുപയർ തോരൻ)", baseMl: 300, baseGrams: 90, unitDesc: "1.5 bowls warm rice gruel + 1/2 cup green gram", benefit: "Gentle on digestion at night and keeps hydration high" }
+        },
+        {
+          morningDrink: { item: "Warm Fenugreek Water / Uluva Vellam (ഉലുവ വെള്ളം) + 4 Soaked Almonds", baseMl: 250, baseGrams: 15, benefit: "Natural anti-inflammatory for period backache & cramps" },
+          breakfast: { item: "Ragi Dosa / Keppai Dosa (റാഗി ദോശ) + Coconut Chutney & Sambar", baseGrams: 150, curryGrams: 140, unitDesc: "2–3 Ragi Dosas + 1 bowl Sambar", benefit: "Ragi (finger millet) is packed with calcium & iron" },
+          fruits: { item: "Ripe Papaya Cubes (കപ്പളങ്ങ / പപ്പായ) + Guava / Peraikka (പേരയ്ക്ക)", baseGrams: 230, unitDesc: "1 cup Papaya (130g) + 1 medium Guava (100g)", benefit: "Vitamin C in Guava triples iron absorption from meals" },
+          lunch: { item: "Matta Rice + Cheera Thoran (ചുവന്ന ചീര തോരൻ - Red Amaranth) + Parippu Curry with 1 tsp Ghee", baseGrams: 160, sideGrams: 120, unitDesc: "1 cup rice + 1 cup red spinach + 1/2 cup dal", benefit: "Red Cheera replenishes hemoglobin levels naturally" },
+          evening: { item: "Warm Jeeraka Vellam + Steamed Kozhukkatta (കൊഴുക്കട്ട with Sharkara & Coconut)", baseMl: 200, baseGrams: 80, unitDesc: "1 glass (200ml) + 2 Kozhukkatta", benefit: "Comforting steamed snack with iron-rich jaggery filling" },
+          dinner: { item: "Idiyappam (ഇടിയപ്പം) + Vegetable / Egg Roast (മുട്ട റോസ്റ്റ് / വെജ് കുറുമ)", baseMl: 0, baseGrams: 160, unitDesc: "3 string hoppers + 1 bowl curry (120g)", benefit: "Light steamed rice noodles that prevent night bloating" }
+        }
+      ],
+      follicular: [
+        {
+          morningDrink: { item: "Warm Lemon & Ginger Water (ഇഞ്ചി നാരങ്ങ വെള്ളം) + 1 tsp Soaked Chia/Sabja Seeds", baseMl: 250, baseGrams: 10, benefit: "Kickstarts metabolism as estrogen & energy rise" },
+          breakfast: { item: "Palappam (പാലപ്പം) + Kerala Vegetable / Egg Stew (വെജിറ്റബിൾ / മുട്ട സ്റ്റൂ)", baseGrams: 150, curryGrams: 160, unitDesc: "2–3 Appams + 1 bowl coconut milk stew", benefit: "Fermented Appam supports gut health & hormone balance" },
+          fruits: { item: "Kerala Guava / Peraikka (പേരയ്ക്ക) + Palayamthodan Banana (പാളയങ്കോടൻ പഴം)", baseGrams: 220, unitDesc: "1 Guava (120g) + 1 small banana (100g)", benefit: "High fiber and antioxidants for follicular cell growth" },
+          lunch: { item: "Matta Rice + Mathi/Sardine Curry (മത്തി കറി) or Soya Thoran + Cabbage Thoran (കാബേജ് തോരൻ)", baseGrams: 165, sideGrams: 130, unitDesc: "1 cup rice + 100g fish/soya + 1 cup cabbage thoran", benefit: "Omega-3 fatty acids & protein build healthy follicles" },
+          evening: { item: "Fresh Karikku / Tender Coconut Water (കരിക്ക്) + Boiled Cherupayar Sundal (ചെറുപയർ സുണ്ടൽ)", baseMl: 250, baseGrams: 75, unitDesc: "1 tender coconut (250ml) + 1/2 cup sprouted green gram", benefit: "Natural electrolytes + plant protein for evening stamina" },
+          dinner: { item: "Wheat Chapati (ചപ്പാത്തി) + Green Peas / Kadala Kurma + Cucumber Salad", baseMl: 0, baseGrams: 160, unitDesc: "2 Chapatis + 1 bowl kurma (140g) + salad", benefit: "Balanced complex carbs and protein for muscle recovery" }
+        },
+        {
+          morningDrink: { item: "Warm Jeeraka Vellam (ജീരക വെള്ളം) + 5 Soaked Raisins & 3 Almonds", baseMl: 250, baseGrams: 20, benefit: "Maintains steady morning blood sugar and digestion" },
+          breakfast: { item: "Soft Idli (ഇഡ്ഡലി) + Drumstick Sambar (മുരിങ്ങക്ക സാമ്പാർ) + Coconut Chutney", baseGrams: 160, curryGrams: 150, unitDesc: "3 Idlis + 1 full bowl Sambar", benefit: "Probiotic fermented breakfast with mineral-rich drumstick" },
+          fruits: { item: "Ripe Jackfruit Bulbs / Chakka (ചക്കച്ചുള) or Pineapple / Kaithachakka (കൈതച്ചക്ക)", baseGrams: 200, unitDesc: "1 cup (150–200g fresh fruit)", benefit: "Rich in B-complex vitamins and digestive enzymes" },
+          lunch: { item: "Matta Rice + Beans Mezhukkupuratti (ബീൻസ് മെഴുക്കുപുരട്ടി) + Moru Curry (മോര് കറി) + Fish/Paneer", baseGrams: 165, sideGrams: 120, unitDesc: "1 cup rice + 1 cup beans + 1 bowl probiotic buttermilk curry", benefit: "Probiotic Moru + green beans support estrogen metabolism" },
+          evening: { item: "Spiced Sambharam / Buttermilk (സംഭാരം) + Aval Nanachathu (അവൽ നനച്ചത്)", baseMl: 200, baseGrams: 80, unitDesc: "1 glass Sambharam + 1 small bowl red poha with coconut", benefit: "Red Aval (flattened rice) gives iron and quick afternoon energy" },
+          dinner: { item: "Oats or Wheat Upma (ഉപ്പുമാവ് with Carrots & Beans) + 1 Boiled Egg / Banana", baseMl: 0, baseGrams: 180, unitDesc: "1 bowl vegetable Upma (180g) + protein side", benefit: "High fiber dinner that keeps you light and energized" }
+        }
+      ],
+      ovulation: [
+        {
+          morningDrink: { item: "Coriander Seed Infused Water / Malli Vellam (മല്ലി വെള്ളം) or Cool Jeeraka Vellam", baseMl: 250, baseGrams: 10, benefit: "Naturally cools body heat during peak ovulation days" },
+          breakfast: { item: "Steam Puttu (പുട്ട്) + Sprouted Cherupayar (മുളപ്പിച്ച ചെറുപയർ)", baseGrams: 160, curryGrams: 140, unitDesc: "1 cup Puttu + 1 bowl sprouted green gram", benefit: "High folate, zinc, and B-vitamins support healthy ovulation" },
+          fruits: { item: "Watermelon / Thannimathan (തണ്ണിമത്തൻ) + Amla / Nellikka (നെല്ലിക്ക)", baseGrams: 250, unitDesc: "1.5 cups Watermelon (220g) + 1 fresh Nellikka (30g)", benefit: "Hydrating glutathione & Vitamin C boost antioxidant levels" },
+          lunch: { item: "Matta Rice + Kerala Avial (അവിയൽ with curd & coconut) + Vendakka Thoran (വെണ്ടയ്ക്ക തോരൻ)", baseGrams: 160, sideGrams: 150, unitDesc: "1 cup rice + 1 full cup mixed-veg Avial + 1/2 cup okra", benefit: "Mixed vegetables in Avial provide fiber to clear excess hormones" },
+          evening: { item: "Chilled Ginger-Curry Leaf Sambharam (ഇഞ്ചി കറിവേപ്പില സംഭാരം) + Roasted Peanuts/Cashews", baseMl: 250, baseGrams: 30, unitDesc: "1 tall glass (250ml) + 1 handful nuts (30g)", benefit: "Probiotics + healthy fats support hormone synthesis" },
+          dinner: { item: "Appam or Idiyappam (3 nos) + Vegetable Kurma / Fish Molee (മീൻ മോളി)", baseMl: 0, baseGrams: 160, unitDesc: "3 nos + 1 bowl coconut-based curry (140g)", benefit: "Light coconut milk healthy fats keep hormones balanced" }
+        }
+      ],
+      luteal: [
+        {
+          morningDrink: { item: "Warm Jeeraka Vellam (ജീരക വെള്ളം) + 4 Soaked Almonds & 1 Walnut", baseMl: 250, baseGrams: 20, benefit: "Prevents luteal-phase water retention and morning fatigue" },
+          breakfast: { item: "Ragi Puttu (റാഗി പുട്ട്) + Steamed Nendran Banana (നേന്ത്രപ്പഴം) + Cherupayar", baseGrams: 165, curryGrams: 120, unitDesc: "1 cup Ragi Puttu + 1 steamed Nendran + 1/2 cup green gram", benefit: "Magnesium & Vitamin B6 in Ragi and Nendran calm PMS mood swings" },
+          fruits: { item: "Ripe Nendran Banana (നേന്ത്രപ്പഴം) + Pomegranate / Mathalam (മാതളം)", baseGrams: 220, unitDesc: "1 medium banana (110g) + 1 cup pomegranate (110g)", benefit: "Curbs sweet cravings naturally and builds iron reserves before period" },
+          lunch: { item: "Matta Rice + Kumbalanga Moru Curry (കുമ്പളങ്ങ മോര് കറി) + Cheera/Muringayila Thoran", baseGrams: 165, sideGrams: 130, unitDesc: "1 cup rice + 1 cup ash gourd moru + 1 cup greens", benefit: "Ash gourd (Kumbalanga) reduces pre-period bloating & acidity" },
+          evening: { item: "Warm Manjal Paal / Turmeric Milk (മഞ്ഞൾ പാൽ) + 1 Ellunda (എള്ളുണ്ട - Sesame Ball)", baseMl: 180, baseGrams: 35, unitDesc: "1 cup warm milk (180ml) + 1 sesame-jaggery ball", benefit: "Curcumin + calcium reduce premenstrual breast tenderness & cramps" },
+          dinner: { item: "Wheat Dosa / Gothambu Dosa (ഗോതമ്പ് ദോശ) + Sambar & Chammanthi", baseMl: 0, baseGrams: 160, unitDesc: "2–3 Wheat Dosas + 1 bowl vegetable Sambar", benefit: "Complex whole wheat carbs boost serotonin for better sleep" }
+        },
+        {
+          morningDrink: { item: "Warm Ajwain / Ayamodakam Water (അയമോദക വെള്ളം) + 2 Dates", baseMl: 250, baseGrams: 20, benefit: "Relieves pre-period gas, bloating, and sluggish digestion" },
+          breakfast: { item: "Red Rice Puttu or Dosa (ദോശ) + Egg Roast / Kadala Curry", baseGrams: 165, curryGrams: 140, unitDesc: "2 Dosas / 1 cup Puttu + 1 bowl curry", benefit: "Sustained morning fullness to prevent mid-day sugar crashes" },
+          fruits: { item: "Papaya (പപ്പായ) + Sweet Lime / Mousambi (മുസംബി) or Guava", baseGrams: 230, unitDesc: "1 cup Papaya (130g) + 1 Mousambi/Guava (100g)", benefit: "Natural fiber keeps digestion smooth during high-progesterone days" },
+          lunch: { item: "Matta Rice + Vazhakoombu Thoran (വാഴക്കൂമ്പ് തോരൻ - Banana Flower) + Parippu Curry", baseGrams: 165, sideGrams: 125, unitDesc: "1 cup rice + 1 cup banana blossom stir-fry + dal", benefit: "Vazhakoombu is a classic Kerala superfood for reducing heavy flow & cramps" },
+          evening: { item: "Chukku Kaapi (ചുക്കുകാപ്പി) or Warm Ginger Tea + Boiled Peanuts / Sundal", baseMl: 150, baseGrams: 60, unitDesc: "1 cup (150ml) + 1/2 cup boiled legumes", benefit: "Vitamin B6 and magnesium relax smooth muscles ahead of Day 1" },
+          dinner: { item: "Warm Kanji (കഞ്ഞി) or 2 Chapatis + Cherupayar / Mixed Veg Curry", baseMl: 250, baseGrams: 140, unitDesc: "1.5 bowls Kanji or 2 Chapatis + 1 bowl curry", benefit: "Calms the nervous system and prepares the body for menstruation" }
+        }
+      ]
+    };
+
+    // =========================================================================
+    // 2. APPLICATION STATE & STORAGE
+    // =========================================================================
+    const KERALA_SYMPTOM_REMEDIES = [
+      {
+        id: "cramps",
+        icon: "⚡",
+        labelEn: "Abdominal Cramps",
+        labelMl: "വയറുവേദന",
+        remedyTitle: "Warm Uluva Vellam (ഉലുവ വെള്ളം) + Sesame-Jaggery",
+        quantity: "200 ml warm fenugreek water + 1 Ellunda (30g)",
+        howToEn: "Soak 1 tsp Uluva (fenugreek seeds) in boiled water for 10 mins and drink warm. Fenugreek & sesame relax uterine muscles naturally.",
+        howToMl: "ഒരു സ്പൂൺ ഉലുവ തിളപ്പിച്ച വെള്ളത്തിൽ 10 മിനിറ്റ് വെച്ച് ഇളം ചൂടോടെ കുടിക്കുക. കൂടെ ഒരു എള്ളുണ്ട കഴിക്കുന്നത് വയറുവേദന കുറയ്ക്കും."
+      },
+      {
+        id: "fatigue",
+        icon: "🔋",
+        labelEn: "Heavy Flow & Tiredness",
+        labelMl: "ക്ഷീണം / അമിത രക്തസ്രാവം",
+        remedyTitle: "Muringayila Soup (മുരിങ്ങയില സൂപ്പ്) & Vazhakoombu",
+        quantity: "150 ml drumstick leaf soup + 1 cup Mathalam (120g) + 2 Dates",
+        howToEn: "Boil fresh Muringayila (drumstick leaves) with garlic, shallots, and black pepper. Pair with pomegranate and dates for rapid iron recovery.",
+        howToMl: "മുരിങ്ങയിലയും ചെറിയ ഉള്ളിയും കുരുമുളകും ചേർത്ത് സൂപ്പ് ഉണ്ടാക്കി കുടിക്കുക. മാതളവും ഈന്തപ്പഴവും ക്ഷീണം പെട്ടെന്ന് മാറ്റും."
+      },
+      {
+        id: "bloating",
+        icon: "🎈",
+        labelEn: "Bloating & Gas",
+        labelMl: "വയർ വീർക്കൽ / ഗ്യാസ്",
+        remedyTitle: "Ayamodakam Water (അയമോദക വെള്ളം) & Inji Moru",
+        quantity: "200 ml warm carom seed water + 1 glass Spiced Buttermilk (200ml)",
+        howToEn: "Boil 1/2 tsp Ayamodakam (carom/ajwain seeds) with a pinch of dry ginger (Chukku). Drink warm after meals to relieve gas.",
+        howToMl: "അര സ്പൂൺ അയമോദകവും ഒരു നുള്ള് ചുക്കും ചേർത്ത് തിളപ്പിച്ച വെള്ളം കുടിക്കുക. ഉച്ചയ്ക്ക് ഇഞ്ചിയും കറിവേപ്പിലയും ചേർത്ത മോര് കഴിക്കുക."
+      },
+      {
+        id: "backache",
+        icon: "🦴",
+        labelEn: "Backache & Leg Pain",
+        labelMl: "നടുവേദന / കാൽ കടച്ചിൽ",
+        remedyTitle: "Warm Manjal Paal (മഞ്ഞൾ പാൽ) & Ragi Kurukku",
+        quantity: "180 ml turmeric milk with black pepper + 1 bowl Ragi (150g)",
+        howToEn: "Calcium in Ragi and anti-inflammatory curcumin in Manjal Paal soothe lower back nerves and prevent night leg cramps.",
+        howToMl: "രാത്രി ഒരു ഗ്ലാസ് ഇളം ചൂടുള്ള മഞ്ഞൾ പാൽ (ഒരു നുള്ള് കുരുമുളക് ചേർത്തത്) കുടിക്കുന്നത് നടുവേദനയും കാൽ കടച്ചിലും ശമിപ്പിക്കും."
+      },
+      {
+        id: "acidity",
+        icon: "🔥",
+        labelEn: "Body Heat & Acidity",
+        labelMl: "ശരീര ചൂട് / നെഞ്ചെരിച്ചൽ",
+        remedyTitle: "Fresh Karikku (കരിക്ക്) & Malli Vellam (മല്ലി വെള്ളം)",
+        quantity: "250 ml tender coconut water + 1 cup Kumbalanga Moru (150g)",
+        howToEn: "Drink fresh Karikku mid-morning and include ash gourd (Kumbalanga) cooked in yogurt at lunch to cool the stomach lining.",
+        howToMl: "രാവിലെ ഒരു കരിക്ക് കുടിക്കുക. ഉച്ചയ്ക്ക് കുമ്പളങ്ങ മോര് കറി കൂട്ടുന്നത് ശരീര ചൂടും അസിഡിറ്റിയും കുറയ്ക്കും."
+      },
+      {
+        id: "mood",
+        icon: "🍫",
+        labelEn: "Mood Swings & Cravings",
+        labelMl: "മൂഡ് മാറ്റം / മധുര കൊതി",
+        remedyTitle: "Steamed Nendran Pazham with Ghee & Nuts",
+        quantity: "1 medium Nendran banana (120g) + 1/2 tsp ghee + 6 soaked almonds",
+        howToEn: "Nendran banana is rich in Vitamin B6 which boosts serotonin (the happy hormone) and stops refined sugar cravings.",
+        howToMl: "പുഴുങ്ങിയ നേന്ത്രപ്പഴത്തിൽ അല്പം നെയ്യ് ചേർത്ത് കഴിക്കുന്നത് മധുര കൊതി കുറയ്ക്കാനും മനസ്സിന് സന്തോഷം നൽകാനും സഹായിക്കും."
+      }
+    ];
+
+    const state = {
+      age: 20,
+      weight: 52,
+      height: 158,
+      lastPeriodDate: "",
+      cycleLength: 28,
+      dietType: "all", // 'all' | 'veg'
+      selectedCycleDay: 1,
+      currentCycleDay: 1,
+      waterGlassesLogged: 0,
+      waterGlassesTarget: 9,
+      checkedMealsByDay: {}, // { "day_3": { morningDrink: true, ... } }
+      symptomsByDay: {}, // { "day_3": ["cramps", "fatigue"] }
+      calendarYear: new Date().getFullYear(),
+      calendarMonth: new Date().getMonth(),
+      selectedGroceryWeek: "1",
+      checkedGroceryItems: {}, // { "item_name": true }
+      cycleHistory: [], // [ { id, startDate, cycleLen, nextPeriod, symptoms, waterAvg } ]
+      showMalayalamFocus: true
+    };
+
+    function getDefaultPeriodDateString() {
+      const d = new Date();
+      d.setDate(d.getDate() - 2); // Default to Day 3 of cycle so user sees immediate Menstrual phase data
+      return d.toISOString().split("T")[0];
+    }
+
+    function loadSavedState() {
+      try {
+        const raw = localStorage.getItem("ritucare_kerala_v1");
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          Object.assign(state, parsed);
+        }
+      } catch (e) {
+        // Fallback to in-memory state in restricted iframe environments
+      }
+      if (!state.lastPeriodDate) {
+        state.lastPeriodDate = getDefaultPeriodDateString();
+      }
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem("ritucare_kerala_v1", JSON.stringify(state));
+      } catch (e) {
+        // Ignore storage errors inside sandboxed preview
+      }
+    }
+
+    function showToast(msg) {
+      const banner = document.getElementById("toastBanner");
+      const text = document.getElementById("toastText");
+      if (!banner || !text) return;
+      text.textContent = msg;
+      banner.classList.remove("hidden");
+      setTimeout(() => {
+        banner.classList.add("hidden");
+      }, 3200);
+    }
+
+    // =========================================================================
+    // 3. CORE CALCULATIONS (Cycle Day, Phase, BMI, Calories, Water & Food Scale)
+    // =========================================================================
+    function getPhaseForDay(day, cycleLength) {
+      const ovulationCenter = Math.max(12, cycleLength - 14);
+      if (day <= 5) return "menstrual";
+      if (day < ovulationCenter - 1) return "follicular";
+      if (day <= ovulationCenter + 1) return "ovulation";
+      return "luteal";
+    }
+
+    function calculateMetrics() {
+      const age = Math.max(10, Math.min(60, Number(state.age) || 20));
+      const weight = Math.max(25, Math.min(150, Number(state.weight) || 52));
+      const height = Math.max(110, Math.min(210, Number(state.height) || 158));
+      const cycleLen = Math.max(21, Math.min(40, Number(state.cycleLength) || 28));
+
+      // 1. BMI Calculation
+      const heightM = height / 100;
+      const bmi = weight / (heightM * heightM);
+      let bmiCategory = "Normal";
+      if (bmi < 18.5) bmiCategory = "Underweight (Boost Portions)";
+      else if (bmi >= 25 && bmi < 30) bmiCategory = "Overweight (High Fiber)";
+      else if (bmi >= 30) bmiCategory = "Focus on Whole Foods";
+
+      // 2. Daily Calorie & Portion Multiplier (Mifflin-St Jeor female baseline + light-moderate activity)
+      const bmr = (10 * weight) + (6.25 * height) - (5 * age) - 161;
+      const selectedPhase = getPhaseForDay(state.selectedCycleDay, cycleLen);
+      const lutealBonus = selectedPhase === "luteal" ? 110 : (selectedPhase === "menstrual" ? 50 : 0);
+      const dailyCalories = Math.round( Math.max(1350, bmr * 1.38 + lutealBonus) );
+
+      // Scale factor relative to standard 1800 kcal baseline
+      const portionScale = Math.max(0.75, Math.min(1.45, dailyCalories / 1800));
+
+      // 3. Daily Water Need (Weight * 35ml + 350ml Kerala warm/humid climate & cycle hydration)
+      const phaseWaterBonusMl = (selectedPhase === "menstrual" || selectedPhase === "ovulation") ? 350 : 250;
+      const totalWaterMl = Math.round((weight * 35 + phaseWaterBonusMl) / 50) * 50;
+      const totalWaterLiters = (totalWaterMl / 1000).toFixed(1);
+      const targetGlasses = Math.max(6, Math.round(totalWaterMl / 250));
+      state.waterGlassesTarget = targetGlasses;
+
+      // 4. Cycle Dates Calculation
+      const startDate = new Date(state.lastPeriodDate + "T00:00:00");
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const diffDays = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
+      let currentCycleDay = 1;
+      if (diffDays >= 0) {
+        currentCycleDay = (diffDays % cycleLen) + 1;
+      }
+      state.currentCycleDay = currentCycleDay;
+
+      // Next Period Date
+      const cyclesElapsed = diffDays >= 0 ? Math.floor(diffDays / cycleLen) + 1 : 1;
+      const nextPeriodDate = new Date(startDate);
+      nextPeriodDate.setDate(startDate.getDate() + (cyclesElapsed * cycleLen));
+      const daysUntilNext = Math.max(0, Math.ceil((nextPeriodDate - today) / (1000 * 60 * 60 * 24)));
+
+      // Ovulation Date (14 days before next period)
+      const ovulationDate = new Date(nextPeriodDate);
+      ovulationDate.setDate(nextPeriodDate.getDate() - 14);
+
+      return {
+        age,
+        weight,
+        height,
+        cycleLen,
+        bmi: bmi.toFixed(1),
+        bmiCategory,
+        dailyCalories,
+        portionScale,
+        proteinGrams: Math.round(weight * 1.1),
+        fruitGrams: Math.round(240 * portionScale),
+        totalWaterMl,
+        totalWaterLiters,
+        targetGlasses,
+        currentCycleDay,
+        nextPeriodDate,
+        daysUntilNext,
+        ovulationDate,
+        startDate
+      };
+    }
+
+    function formatShortDate(dateObj) {
+      return dateObj.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
+    }
+
+    function formatDayWithMonth(dateObj) {
+      return dateObj.toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short" });
+    }
+
+    function adaptVegetarianText(text) {
+      if (state.dietType !== "veg") return text;
+      return text
+        .replace(/Mathi\/Sardine Curry \(മത്തി കറി\) or Soya Thoran/g, "Soya Chunk Thoran (സോയ തോരൻ) + Paneer")
+        .replace(/Egg Roast \/ വെജ് കുറുമ/g, "Vegetable Kurma (വെജ് കുറുമ)")
+        .replace(/Vegetable \/ Egg Roast \(മുട്ട റോസ്റ്റ് \/ വെജ് കുറുമ\)/g, "Kerala Vegetable Stew / Kurma (വെജ് കുറുമ)")
+        .replace(/Kerala Vegetable \/ Egg Stew \(വെജിറ്റബിൾ \/ മുട്ട സ്റ്റൂ\)/g, "Kerala Vegetable Coconut Milk Stew (വെജിറ്റബിൾ സ്റ്റൂ)")
+        .replace(/Fish\/Paneer/g, "Paneer / Mushroom Thoran")
+        .replace(/1 Boiled Egg \/ Banana/g, "Steamed Banana + Handful Almonds")
+        .replace(/Vegetable Kurma \/ Fish Molee \(മീൻ മോളി\)/g, "Kerala Vegetable Molee (വെജിറ്റബിൾ മോളി)")
+        .replace(/Egg Roast \/ Kadala Curry/g, "Varutharacha Kadala Curry (വറുത്തരച്ച കടല കറി)")
+        .replace(/fish\/soya/g, "soya/paneer");
+    }
+
+    // =========================================================================
+    // 4. UI RENDERING
+    // =========================================================================
+    function renderAll() {
+      const metrics = calculateMetrics();
+      const currentPhaseKey = getPhaseForDay(metrics.currentCycleDay, metrics.cycleLen);
+      const currentPhaseObj = KERALA_PHASE_INFO[currentPhaseKey];
+
+      // 1. Update Summary Card 1 (Cycle & Dates)
+      const phaseBadge = document.getElementById("currentPhaseBadge");
+      phaseBadge.textContent = currentPhaseObj.shortBadge;
+      phaseBadge.className = "text-xs font-semibold px-2.5 py-0.5 rounded-full " + currentPhaseObj.colorClass;
+
+      document.getElementById("cycleDayDisplay").textContent = "Day " + metrics.currentCycleDay;
+      document.getElementById("cycleTotalDisplay").textContent = "of " + metrics.cycleLen + "-day cycle (Today)";
+      document.getElementById("phaseSummaryText").textContent = state.showMalayalamFocus
+        ? currentPhaseObj.summaryMl
+        : currentPhaseObj.summaryEn;
+
+      document.getElementById("nextPeriodDateDisplay").textContent = formatShortDate(metrics.nextPeriodDate);
+      document.getElementById("daysUntilNextDisplay").textContent = "In " + metrics.daysUntilNext + " days";
+      document.getElementById("ovulationDateDisplay").textContent = formatDayWithMonth(metrics.ovulationDate);
+
+      // 2. Update Summary Card 2 (BMI & Portions)
+      document.getElementById("bmiBadge").textContent = "BMI: " + metrics.bmi + " • " + metrics.bmiCategory;
+      document.getElementById("calorieTargetDisplay").textContent = metrics.dailyCalories.toLocaleString() + " kcal";
+      document.getElementById("portionNoteDisplay").textContent =
+        "Portions scaled for " + metrics.weight + " kg, " + metrics.height + " cm, age " + metrics.age + " (" + Math.round(metrics.portionScale * 100) + "% scale).";
+      document.getElementById("proteinTargetDisplay").textContent = metrics.proteinGrams + "g/day";
+      document.getElementById("ironTargetDisplay").textContent = currentPhaseObj.ironFocus;
+      document.getElementById("fruitTargetDisplay").textContent = metrics.fruitGrams + "g/day";
+
+      // 3. Update Summary Card 3 (Hydration Tracker)
+      document.getElementById("waterTargetBadge").textContent =
+        "Target: " + metrics.totalWaterLiters + " L (" + metrics.targetGlasses + " glasses)";
+      document.getElementById("waterCountDisplay").textContent =
+        state.waterGlassesLogged + " / " + metrics.targetGlasses + " Glasses";
+      document.getElementById("waterMlDisplay").textContent =
+        (state.waterGlassesLogged * 250) + " ml of " + metrics.totalWaterMl + " ml logged today";
+
+      renderWaterGlasses(metrics.targetGlasses);
+
+      // 4. Render Day Selector Strip & Selected Day Meals
+      if (state.selectedCycleDay > metrics.cycleLen) {
+        state.selectedCycleDay = metrics.cycleLen;
+      }
+      renderDayStrip(metrics);
+      renderSelectedDayPlan(metrics);
+      renderMonthlyCalendar(metrics);
+      renderSymptomsAndRemedies(metrics);
+      renderGroceryList(metrics);
+      renderCycleHistory();
+    }
+
+    // =========================================================================
+    // 5. STEP 3: KERALA GROCERY LIST GENERATOR & CYCLE HISTORY LOGIC
+    // =========================================================================
+    const KERALA_GROCERY_TEMPLATES = {
+      grains: [
+        { name: "Kerala Matta Rice (മട്ട അരി ചോറ്)", baseGramsPerDay: 160, unit: "kg", isPerDay: true },
+        { name: "Puttu Podi / Red Rice Flour (പുട്ടുപൊടി)", baseGramsPerDay: 80, unit: "g", isPerDay: true },
+        { name: "Ragi Flour (റാഗി പൊടി)", baseGramsPerDay: 50, unit: "g", isPerDay: true },
+        { name: "Red Aval (ചുവന്ന അവൽ)", baseGramsPerDay: 40, unit: "g", isPerDay: true },
+        { name: "Whole Wheat Atta (ഗോതമ്പ് പൊടി)", baseGramsPerDay: 70, unit: "g", isPerDay: true }
+      ],
+      legumes: [
+        { name: "Cherupayar / Green Gram (ചെറുപയർ)", baseGramsPerDay: 80, unit: "g", isPerDay: true },
+        { name: "Kadala / Black Chickpeas (കടല)", baseGramsPerDay: 70, unit: "g", isPerDay: true },
+        { name: "Parippu / Toor Dal (തുവര പരിപ്പ്)", baseGramsPerDay: 50, unit: "g", isPerDay: true },
+        { name: "Mathi / Sardines or Soya Chunks (മത്തി / സോയ)", baseGramsPerDay: 85, unit: "g", isPerDay: true }
+      ],
+      greens: [
+        { name: "Fresh Muringayila (മുരിങ്ങയില - Drumstick leaves)", baseWeekly: 3, unit: "bunches", isPerDay: false },
+        { name: "Cheera / Red Amaranth (ചുവന്ന ചീര)", baseWeekly: 2, unit: "bunches", isPerDay: false },
+        { name: "Ash Gourd / Kumbalanga (കുമ്പളങ്ങ)", baseWeekly: 1, unit: "small (800g)", isPerDay: false },
+        { name: "Vazhakoombu / Banana Blossom (വാഴക്കൂമ്പ്)", baseWeekly: 1, unit: "no", isPerDay: false },
+        { name: "Carrots, Beans & Okra (പച്ചക്കറികൾ)", baseGramsPerDay: 130, unit: "g", isPerDay: true }
+      ],
+      fruits: [
+        { name: "Nendran Pazham (നേന്ത്രപ്പഴം - Kerala Banana)", baseWeekly: 7, unit: "nos (~900g)", isPerDay: false },
+        { name: "Mathalam / Pomegranate (മാതളനാരങ്ങ)", baseWeekly: 4, unit: "nos (~600g)", isPerDay: false },
+        { name: "Guava / Peraikka (പേരയ്ക്ക)", baseWeekly: 5, unit: "nos (~500g)", isPerDay: false },
+        { name: "Papaya / Kappalanga (പപ്പായ)", baseWeekly: 1, unit: "medium (~800g)", isPerDay: false },
+        { name: "Karikku / Tender Coconut (കരിക്ക്)", baseWeekly: 3, unit: "nos", isPerDay: false },
+        { name: "Amla / Nellikka (നെല്ലിക്ക)", baseWeekly: 100, unit: "g", isPerDay: false }
+      ],
+      wellness: [
+        { name: "Jeerakam / Cumin Seeds (ജീരകം)", baseWeekly: 100, unit: "g", isPerDay: false },
+        { name: "Uluva / Fenugreek Seeds (ഉലുവ)", baseWeekly: 50, unit: "g", isPerDay: false },
+        { name: "Ayamodakam / Carom Seeds (അയമോദകം)", baseWeekly: 50, unit: "g", isPerDay: false },
+        { name: "Chukku / Dry Ginger (ചുക്ക്)", baseWeekly: 50, unit: "g", isPerDay: false },
+        { name: "Marayoor Sharkara / Palm Jaggery (ശർക്കര)", baseWeekly: 300, unit: "g", isPerDay: false },
+        { name: "Ellunda / Sesame Balls (എള്ളുണ്ട)", baseWeekly: 7, unit: "nos", isPerDay: false }
+      ]
+    };
+
+    function renderGroceryList(metrics) {
+      const container = document.getElementById("groceryCategoriesGrid");
+      if (!container) return;
+      container.innerHTML = "";
+
+      const weekVal = state.selectedGroceryWeek || "1";
+      const daysCount = weekVal === "full" ? metrics.cycleLen : 7;
+      const scale = metrics.portionScale;
+
+      const categoryCards = [
+        { key: "grains", title: "🌾 Grains & Millets", color: "rose", items: KERALA_GROCERY_TEMPLATES.grains },
+        { key: "legumes", title: "🥣 Legumes & Protein", color: "emerald", items: KERALA_GROCERY_TEMPLATES.legumes },
+        { key: "greens", title: "🥬 Greens & Veggies", color: "amber", items: KERALA_GROCERY_TEMPLATES.greens },
+        { key: "fruits", title: "🍌 Kerala Fruits & Drinks", color: "purple", items: KERALA_GROCERY_TEMPLATES.fruits }
+      ];
+
+      categoryCards.forEach((cat) => {
+        const card = document.createElement("div");
+        card.className = "rounded-2xl border border-slate-200 bg-slate-50/70 p-4 flex flex-col justify-between";
+
+        let itemsHtml = '<ul class="space-y-2 mt-2">';
+        cat.items.forEach((item, idx) => {
+          const itemKey = cat.key + "_" + idx;
+          const isChecked = Boolean(state.checkedGroceryItems[itemKey]);
+
+          let qtyStr = "";
+          if (item.isPerDay) {
+            const totalGrams = Math.round(item.baseGramsPerDay * scale * daysCount);
+            if (totalGrams >= 1000) {
+              qtyStr = (totalGrams / 1000).toFixed(1) + " kg";
+            } else {
+              qtyStr = totalGrams + " g";
+            }
+          } else {
+            const factor = weekVal === "full" ? Math.round(metrics.cycleLen / 7) : 1;
+            qtyStr = (item.baseWeekly * factor) + " " + item.unit;
+          }
+
+          itemsHtml +=
+            '<li class="flex items-start justify-between gap-2 text-xs py-1 border-b border-slate-100 last:border-none">' +
+              '<label class="flex items-start gap-2 cursor-pointer">' +
+                '<input type="checkbox" data-grocery-key="' + itemKey + '" ' + (isChecked ? 'checked' : '') + ' class="mt-0.5 rounded text-emerald-600 focus:ring-emerald-500" />' +
+                '<span class="' + (isChecked ? 'line-through text-slate-400' : 'text-slate-800 font-medium') + '">' + item.name + '</span>' +
+              '</label>' +
+              '<span class="font-bold text-slate-900 shrink-0 bg-white px-2 py-0.5 rounded border border-slate-200">' + qtyStr + '</span>' +
+            '</li>';
+        });
+        itemsHtml += '</ul>';
+
+        card.innerHTML =
+          '<div>' +
+            '<h3 class="text-xs font-bold uppercase tracking-wider text-slate-900 border-b border-slate-200 pb-1.5">' + cat.title + '</h3>' +
+            itemsHtml +
+          '</div>';
+
+        container.appendChild(card);
+      });
+
+      // Attach checkbox listeners
+      container.querySelectorAll("input[data-grocery-key]").forEach((cb) => {
+        cb.addEventListener("change", (e) => {
+          const key = e.target.getAttribute("data-grocery-key");
+          state.checkedGroceryItems[key] = e.target.checked;
+          saveState();
+          renderGroceryList(metrics);
+        });
+      });
+    }
+
+    function renderCycleHistory() {
+      const tbody = document.getElementById("cycleHistoryTableBody");
+      if (!tbody) return;
+      tbody.innerHTML = "";
+
+      if (!Array.isArray(state.cycleHistory) || state.cycleHistory.length === 0) {
+        tbody.innerHTML =
+          '<tr><td colspan="6" class="py-4 text-center text-xs text-slate-400">No past cycles saved yet. Click "+ Save Current Cycle Record" to save your first record!</td></tr>';
+        return;
+      }
+
+      state.cycleHistory.forEach((rec, idx) => {
+        const tr = document.createElement("tr");
+        tr.className = "hover:bg-slate-50 transition";
+        tr.innerHTML =
+          '<td class="py-2.5 px-3 font-semibold text-slate-900">' + rec.startDate + '</td>' +
+          '<td class="py-2.5 px-3">' + rec.cycleLen + ' days</td>' +
+          '<td class="py-2.5 px-3 text-rose-700 font-medium">' + rec.nextPeriod + '</td>' +
+          '<td class="py-2.5 px-3 text-slate-600 truncate max-w-[180px]">' + (rec.symptoms || "None logged") + '</td>' +
+          '<td class="py-2.5 px-3 text-sky-700 font-medium">' + rec.waterAvg + '</td>' +
+          '<td class="py-2.5 px-3 text-right">' +
+            '<button type="button" data-delete-hist="' + idx + '" class="text-rose-600 hover:text-rose-800 text-xs font-bold">Delete</button>' +
+          '</td>';
+
+        tr.querySelector("button[data-delete-hist]").addEventListener("click", () => {
+          state.cycleHistory.splice(idx, 1);
+          saveState();
+          renderCycleHistory();
+          showToast("Deleted cycle record.");
+        });
+
+        tbody.appendChild(tr);
+      });
+    }
+
+    function getCycleDayForCalendarDate(targetDate, startDate, cycleLen) {
+      const d1 = new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate());
+      const d0 = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
+      const diffDays = Math.floor((d1 - d0) / (1000 * 60 * 60 * 24));
+      const mod = ((diffDays % cycleLen) + cycleLen) % cycleLen;
+      return mod + 1;
+    }
+
+    function renderMonthlyCalendar(metrics) {
+      const grid = document.getElementById("calendarDaysGrid");
+      const monthLabel = document.getElementById("calendarMonthLabel");
+      if (!grid || !monthLabel) return;
+
+      const year = state.calendarYear;
+      const month = state.calendarMonth;
+      const firstOfMonth = new Date(year, month, 1);
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const startWeekday = firstOfMonth.getDay();
+
+      monthLabel.textContent = firstOfMonth.toLocaleDateString("en-IN", { month: "long", year: "numeric" });
+      grid.innerHTML = "";
+
+      // Empty leading slots
+      for (let i = 0; i < startWeekday; i++) {
+        const empty = document.createElement("div");
+        empty.className = "h-16 rounded-xl bg-slate-50/50 border border-transparent";
+        grid.appendChild(empty);
+      }
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      for (let dateNum = 1; dateNum <= daysInMonth; dateNum++) {
+        const cellDate = new Date(year, month, dateNum);
+        const cycleDay = getCycleDayForCalendarDate(cellDate, metrics.startDate, metrics.cycleLen);
+        const phase = getPhaseForDay(cycleDay, metrics.cycleLen);
+        const isToday = cellDate.getTime() === today.getTime();
+        const isSelected = cycleDay === state.selectedCycleDay;
+
+        let cellStyle = "bg-rose-50/90 border-rose-200 text-rose-900";
+        let tagText = "🩸 D" + cycleDay;
+        if (phase === "follicular") {
+          cellStyle = "bg-emerald-50/80 border-emerald-200 text-emerald-900";
+          tagText = "🌱 D" + cycleDay;
+        } else if (phase === "ovulation") {
+          cellStyle = "bg-amber-100/80 border-amber-300 text-amber-900";
+          tagText = "☀️ D" + cycleDay;
+        } else if (phase === "luteal") {
+          cellStyle = "bg-purple-50/80 border-purple-200 text-purple-900";
+          tagText = "🌙 D" + cycleDay;
+        }
+
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "h-16 p-1.5 rounded-xl border text-left flex flex-col justify-between transition hover:scale-[1.02] " +
+          cellStyle +
+          (isSelected ? " ring-2 ring-slate-900 shadow-sm" : "");
+
+        btn.innerHTML =
+          '<div class="flex items-center justify-between w-full">' +
+            '<span class="text-xs font-bold">' + dateNum + '</span>' +
+            (isToday ? '<span class="text-[9px] font-extrabold px-1.5 py-0.2 rounded bg-slate-900 text-white">TODAY</span>' : '') +
+          '</div>' +
+          '<div class="text-[10px] font-semibold truncate">' + tagText + '</div>';
+
+        btn.addEventListener("click", () => {
+          state.selectedCycleDay = cycleDay;
+          saveState();
+          renderAll();
+        });
+
+        grid.appendChild(btn);
+      }
+    }
+
+    function renderSymptomsAndRemedies(metrics) {
+      const day = state.selectedCycleDay;
+      const dayKey = "day_" + day;
+      if (!Array.isArray(state.symptomsByDay[dayKey])) {
+        state.symptomsByDay[dayKey] = [];
+      }
+      const activeSymptoms = state.symptomsByDay[dayKey];
+
+      const labelEl = document.getElementById("symptomDayLabel");
+      if (labelEl) {
+        labelEl.textContent = "Cycle Day " + day;
+      }
+
+      const container = document.getElementById("symptomButtonsContainer");
+      const remedyBox = document.getElementById("remedyRecommendationsBox");
+      if (!container || !remedyBox) return;
+
+      container.innerHTML = "";
+      KERALA_SYMPTOM_REMEDIES.forEach((sym) => {
+        const isActive = activeSymptoms.includes(sym.id);
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "p-2.5 rounded-xl border text-left transition flex flex-col justify-between " +
+          (isActive
+            ? "bg-rose-600 text-white border-rose-600 shadow-sm"
+            : "bg-slate-50 text-slate-800 border-slate-200 hover:bg-rose-50 hover:border-rose-200");
+
+        btn.innerHTML =
+          '<div class="flex items-center justify-between">' +
+            '<span class="text-base">' + sym.icon + '</span>' +
+            '<span class="text-[10px] font-bold px-1.5 py-0.5 rounded-full ' + (isActive ? 'bg-white/20 text-white' : 'bg-slate-200/70 text-slate-600') + '">' +
+              (isActive ? 'Active' : '+ Log') +
+            '</span>' +
+          '</div>' +
+          '<div class="mt-2">' +
+            '<div class="text-xs font-bold leading-tight">' + sym.labelEn + '</div>' +
+            '<div class="text-[11px] opacity-80 mt-0.5">' + sym.labelMl + '</div>' +
+          '</div>';
+
+        btn.addEventListener("click", () => {
+          const idx = activeSymptoms.indexOf(sym.id);
+          if (idx >= 0) {
+            activeSymptoms.splice(idx, 1);
+          } else {
+            activeSymptoms.push(sym.id);
+          }
+          saveState();
+          renderSymptomsAndRemedies(metrics);
+        });
+
+        container.appendChild(btn);
+      });
+
+      remedyBox.innerHTML = "";
+      if (activeSymptoms.length === 0) {
+        remedyBox.innerHTML =
+          '<div class="flex items-center justify-between text-xs text-amber-900">' +
+            '<span>🌿 <strong>Tip:</strong> Tap any symptom above (like <em>Abdominal Cramps</em> or <em>Tiredness</em>) to see instant Kerala home remedies with exact quantities for Day ' + day + '.</span>' +
+          '</div>';
+        return;
+      }
+
+      const scale = metrics.portionScale;
+      const header = document.createElement("div");
+      header.className = "text-xs font-bold uppercase tracking-wider text-amber-900 flex items-center justify-between";
+      header.innerHTML = '<span>🥣 Recommended Kerala Kitchen Remedies for Day ' + day + ' (' + activeSymptoms.length + ' selected)</span>';
+      remedyBox.appendChild(header);
+
+      const listGrid = document.createElement("div");
+      listGrid.className = "grid grid-cols-1 md:grid-cols-2 gap-3";
+
+      activeSymptoms.forEach((symId) => {
+        const sym = KERALA_SYMPTOM_REMEDIES.find((item) => item.id === symId);
+        if (!sym) return;
+        const card = document.createElement("div");
+        card.className = "bg-white rounded-xl p-3.5 border border-amber-200 shadow-sm";
+        card.innerHTML =
+          '<div class="flex items-center justify-between gap-2">' +
+            '<span class="text-xs font-bold text-rose-700">' + sym.icon + ' For ' + sym.labelEn + ' (' + sym.labelMl + ')</span>' +
+            '<span class="text-[11px] font-semibold px-2 py-0.5 rounded-md bg-amber-100 text-amber-900">⚖️ ' + sym.quantity + '</span>' +
+          '</div>' +
+          '<h4 class="text-sm font-bold text-slate-900 mt-1.5">' + sym.remedyTitle + '</h4>' +
+          '<p class="text-xs text-slate-600 mt-1 leading-relaxed">' +
+            (state.showMalayalamFocus ? sym.howToMl + " (" + sym.howToEn + ")" : sym.howToEn) +
+          '</p>';
+        listGrid.appendChild(card);
+      });
+
+      remedyBox.appendChild(listGrid);
+    }
+
+    function renderWaterGlasses(targetGlasses) {
+      const container = document.getElementById("waterGlassesContainer");
+      container.innerHTML = "";
+      const totalToShow = Math.max(targetGlasses, state.waterGlassesLogged);
+      for (let i = 1; i <= totalToShow; i++) {
+        const filled = i <= state.waterGlassesLogged;
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "w-7 h-8 rounded-lg text-xs font-bold flex items-center justify-center border transition " +
+          (filled
+            ? "bg-sky-500 text-white border-sky-600 shadow-sm"
+            : "bg-sky-50 text-sky-400 border-sky-200 hover:bg-sky-100");
+        btn.title = "Glass " + i + " (250 ml)";
+        btn.textContent = filled ? "💧" : i;
+        btn.addEventListener("click", () => {
+          state.waterGlassesLogged = (state.waterGlassesLogged === i) ? i - 1 : i;
+          saveState();
+          renderAll();
+        });
+        container.appendChild(btn);
+      }
+    }
+
+    function renderDayStrip(metrics) {
+      const strip = document.getElementById("daySelectorStrip");
+      strip.innerHTML = "";
+
+      for (let day = 1; day <= metrics.cycleLen; day++) {
+        const phase = getPhaseForDay(day, metrics.cycleLen);
+        const isSelected = day === state.selectedCycleDay;
+        const isToday = day === metrics.currentCycleDay;
+
+        let dotColor = "bg-rose-400";
+        if (phase === "follicular") dotColor = "bg-emerald-400";
+        else if (phase === "ovulation") dotColor = "bg-amber-400";
+        else if (phase === "luteal") dotColor = "bg-purple-400";
+
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "shrink-0 px-3 py-2 rounded-xl border text-xs font-semibold flex flex-col items-center gap-1 transition " +
+          (isSelected
+            ? "bg-slate-900 text-white border-slate-900 shadow-sm"
+            : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100");
+
+        btn.innerHTML =
+          '<span class="text-[10px] opacity-75">' + (isToday ? "TODAY" : "Day") + '</span>' +
+          '<span class="text-sm font-bold">' + day + '</span>' +
+          '<span class="w-2 h-2 rounded-full ' + dotColor + '"></span>';
+
+        btn.addEventListener("click", () => {
+          state.selectedCycleDay = day;
+          saveState();
+          renderAll();
+        });
+        strip.appendChild(btn);
+      }
+    }
+
+    function renderSelectedDayPlan(metrics) {
+      const day = state.selectedCycleDay;
+      const phaseKey = getPhaseForDay(day, metrics.cycleLen);
+      const phaseInfo = KERALA_PHASE_INFO[phaseKey];
+      const menuList = KERALA_MENUS[phaseKey];
+      const menu = menuList[(day - 1) % menuList.length];
+
+      // Calculate exact calendar date for this cycle day
+      const dayDate = new Date(metrics.startDate);
+      const currentCycleIndex = Math.max(0, Math.floor((new Date() - metrics.startDate) / (1000 * 60 * 60 * 24 * metrics.cycleLen)));
+      dayDate.setDate(metrics.startDate.getDate() + (currentCycleIndex * metrics.cycleLen) + (day - 1));
+
+      // Update Banner
+      const banner = document.getElementById("selectedDayBanner");
+      banner.className = "rounded-2xl bg-gradient-to-r " + phaseInfo.bannerGradient + " text-white p-4 flex flex-wrap items-center justify-between gap-4 shadow-sm";
+      document.getElementById("selectedDayNumberBadge").textContent =
+        "Cycle Day " + day + (day === metrics.currentCycleDay ? " • TODAY" : "");
+      document.getElementById("selectedDayDateText").textContent = formatDayWithMonth(dayDate);
+      document.getElementById("selectedDayPhaseTitle").textContent = phaseInfo.name;
+      document.getElementById("selectedDayNutrientFocus").textContent =
+        state.showMalayalamFocus ? phaseInfo.summaryMl : phaseInfo.summaryEn;
+
+      const scale = metrics.portionScale;
+      const dayKey = "day_" + day;
+      if (!state.checkedMealsByDay[dayKey]) {
+        state.checkedMealsByDay[dayKey] = {};
+      }
+      const checkedMap = state.checkedMealsByDay[dayKey];
+
+      const mealCardsData = [
+        {
+          key: "morningDrink",
+          timeLabel: "6:30 – 7:30 AM",
+          title: "1. Early Morning Drink (രാവിലെ കുടിക്കാൻ)",
+          icon: "🍵",
+          foodName: adaptVegetarianText(menu.morningDrink.item),
+          quantityBadge: Math.round(menu.morningDrink.baseMl * scale) + " ml liquid + " + Math.round(menu.morningDrink.baseGrams * scale) + "g dry fruits/seeds",
+          benefit: menu.morningDrink.benefit
+        },
+        {
+          key: "breakfast",
+          timeLabel: "8:00 – 9:00 AM",
+          title: "2. Kerala Breakfast (പ്രാതൽ)",
+          icon: "🍲",
+          foodName: adaptVegetarianText(menu.breakfast.item),
+          quantityBadge: Math.round(menu.breakfast.baseGrams * scale) + "g main + " + Math.round(menu.breakfast.curryGrams * scale) + "g curry (" + menu.breakfast.unitDesc + ")",
+          benefit: menu.breakfast.benefit
+        },
+        {
+          key: "fruits",
+          timeLabel: "11:00 AM",
+          title: "3. Local Kerala Fruits (പഴങ്ങൾ)",
+          icon: "🍌",
+          foodName: adaptVegetarianText(menu.fruits.item),
+          quantityBadge: Math.round(menu.fruits.baseGrams * scale) + "g fresh fruit (" + menu.fruits.unitDesc + ")",
+          benefit: menu.fruits.benefit
+        },
+        {
+          key: "lunch",
+          timeLabel: "1:00 – 2:00 PM",
+          title: "4. Kerala Lunch (ഉച്ചഭക്ഷണം)",
+          icon: "🍛",
+          foodName: adaptVegetarianText(menu.lunch.item),
+          quantityBadge: Math.round(menu.lunch.baseGrams * scale) + "g Matta rice + " + Math.round(menu.lunch.sideGrams * scale) + "g Thoran/Curry",
+          benefit: menu.lunch.benefit
+        },
+        {
+          key: "evening",
+          timeLabel: "4:30 – 5:30 PM",
+          title: "5. Evening Drink & Snack (വൈകുന്നേരം)",
+          icon: "🥥",
+          foodName: adaptVegetarianText(menu.evening.item),
+          quantityBadge: Math.round(menu.evening.baseMl * scale) + " ml drink + " + Math.round(menu.evening.baseGrams * scale) + "g snack",
+          benefit: menu.evening.benefit
+        },
+        {
+          key: "dinner",
+          timeLabel: "7:30 – 8:30 PM",
+          title: "6. Light Kerala Dinner (അത്താഴം)",
+          icon: "🌙",
+          foodName: adaptVegetarianText(menu.dinner.item),
+          quantityBadge: (menu.dinner.baseMl ? Math.round(menu.dinner.baseMl * scale) + " ml Kanji + " : "") + Math.round(menu.dinner.baseGrams * scale) + "g (" + menu.dinner.unitDesc + ")",
+          benefit: menu.dinner.benefit
+        }
+      ];
+
+      const grid = document.getElementById("mealsGrid");
+      grid.innerHTML = "";
+      let completedCount = 0;
+
+      mealCardsData.forEach((meal) => {
+        const isChecked = Boolean(checkedMap[meal.key]);
+        if (isChecked) completedCount++;
+
+        const card = document.createElement("div");
+        card.className = "rounded-2xl border p-4 flex flex-col justify-between transition " +
+          (isChecked
+            ? "bg-emerald-50/70 border-emerald-300"
+            : "bg-slate-50/70 border-slate-200/90 hover:border-rose-200");
+
+        card.innerHTML =
+          '<div>' +
+            '<div class="flex items-center justify-between gap-2">' +
+              '<span class="text-[11px] font-semibold text-slate-500">' + meal.icon + " " + meal.timeLabel + '</span>' +
+              '<span class="text-[11px] font-bold px-2 py-0.5 rounded-full ' + (isChecked ? 'bg-emerald-200 text-emerald-900' : 'bg-white text-slate-700 border border-slate-200') + '">' +
+                (isChecked ? "✓ Eaten" : "Planned") +
+              '</span>' +
+            '</div>' +
+            '<h4 class="text-xs font-bold uppercase tracking-wide text-rose-700 mt-2">' + meal.title + '</h4>' +
+            '<p class="text-sm font-bold text-slate-900 mt-1 leading-snug">' + meal.foodName + '</p>' +
+            '<div class="mt-2.5 inline-block rounded-lg bg-amber-100/80 border border-amber-200 px-2.5 py-1 text-xs font-semibold text-amber-900">' +
+              '⚖️ Quantity: ' + meal.quantityBadge +
+            '</div>' +
+            '<p class="text-xs text-slate-600 mt-2 leading-relaxed">' + meal.benefit + '</p>' +
+          '</div>' +
+          '<button type="button" class="mt-3 w-full py-2 rounded-xl text-xs font-semibold border transition ' +
+            (isChecked
+              ? 'bg-emerald-600 text-white border-emerald-600 hover:bg-emerald-700'
+              : 'bg-white text-slate-700 border-slate-200 hover:bg-rose-50 hover:border-rose-200') + '">' +
+            (isChecked ? "✓ Logged for Day " + day : "Mark as Eaten on Day " + day) +
+          '</button>';
+
+        const actionBtn = card.querySelector("button");
+        actionBtn.addEventListener("click", () => {
+          checkedMap[meal.key] = !checkedMap[meal.key];
+          saveState();
+          renderSelectedDayPlan(metrics);
+        });
+
+        grid.appendChild(card);
+      });
+
+      document.getElementById("mealCompletionText").textContent = completedCount + " / 6 Completed";
+    }
+
+    // =========================================================================
+    // 5. EVENT LISTENERS & INITIALIZATION
+    // =========================================================================
+    function syncInputsFromState() {
+      document.getElementById("ageInput").value = state.age;
+      document.getElementById("weightInput").value = state.weight;
+      document.getElementById("heightInput").value = state.height;
+      document.getElementById("lastPeriodInput").value = state.lastPeriodDate;
+      document.getElementById("cycleLengthInput").value = state.cycleLength;
+      document.getElementById("dietTypeSelect").value = state.dietType;
+    }
+
+    function readInputsIntoState() {
+      state.age = Number(document.getElementById("ageInput").value) || 20;
+      state.weight = Number(document.getElementById("weightInput").value) || 52;
+      state.height = Number(document.getElementById("heightInput").value) || 158;
+      state.lastPeriodDate = document.getElementById("lastPeriodInput").value || getDefaultPeriodDateString();
+      state.cycleLength = Number(document.getElementById("cycleLengthInput").value) || 28;
+      state.dietType = document.getElementById("dietTypeSelect").value || "all";
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      loadSavedState();
+      syncInputsFromState();
+
+      // Calculate initial currentCycleDay so selectedCycleDay starts on Today's cycle day
+      const initialMetrics = calculateMetrics();
+      state.selectedCycleDay = initialMetrics.currentCycleDay;
+      renderAll();
+
+      // Form Submit & Live Input Changes
+      const form = document.getElementById("trackerForm");
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        readInputsIntoState();
+        const m = calculateMetrics();
+        state.selectedCycleDay = m.currentCycleDay;
+        saveState();
+        renderAll();
+        showToast("Updated cycle dates & scaled Kerala food quantities!");
+      });
+
+      ["ageInput", "weightInput", "heightInput", "lastPeriodInput", "cycleLengthInput", "dietTypeSelect"].forEach((id) => {
+        const el = document.getElementById(id);
+        el.addEventListener("change", () => {
+          readInputsIntoState();
+          saveState();
+          renderAll();
+        });
+      });
+
+      // Water Controls
+      document.getElementById("waterPlusBtn").addEventListener("click", () => {
+        state.waterGlassesLogged = Math.min(20, state.waterGlassesLogged + 1);
+        saveState();
+        renderAll();
+      });
+
+      document.getElementById("waterMinusBtn").addEventListener("click", () => {
+        state.waterGlassesLogged = Math.max(0, state.waterGlassesLogged - 1);
+        saveState();
+        renderAll();
+      });
+
+      document.getElementById("resetWaterBtn").addEventListener("click", () => {
+        state.waterGlassesLogged = 0;
+        saveState();
+        renderAll();
+      });
+
+      // Day Navigation Buttons
+      document.getElementById("prevDayBtn").addEventListener("click", () => {
+        state.selectedCycleDay = state.selectedCycleDay > 1 ? state.selectedCycleDay - 1 : state.cycleLength;
+        saveState();
+        renderAll();
+      });
+
+      document.getElementById("nextDayBtn").addEventListener("click", () => {
+        state.selectedCycleDay = state.selectedCycleDay < state.cycleLength ? state.selectedCycleDay + 1 : 1;
+        saveState();
+        renderAll();
+      });
+
+      document.getElementById("jumpTodayBtn").addEventListener("click", () => {
+        state.selectedCycleDay = state.currentCycleDay;
+        saveState();
+        renderAll();
+      });
+
+      // Phase Jump Buttons
+      document.querySelectorAll(".phase-jump-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const targetDay = Number(btn.getAttribute("data-phase-start")) || 1;
+          state.selectedCycleDay = Math.min(state.cycleLength, targetDay);
+          saveState();
+          renderAll();
+        });
+      });
+
+      // Language Toggle Button
+      document.getElementById("langToggleBtn").addEventListener("click", () => {
+        state.showMalayalamFocus = !state.showMalayalamFocus;
+        document.getElementById("langToggleBtn").textContent = state.showMalayalamFocus
+          ? "🗣️ ഭാഷ: English + മലയാളം"
+          : "🗣️ Language: English Only";
+        saveState();
+        renderAll();
+      });
+
+      // Reset Sample Button
+      document.getElementById("resetDemoBtn").addEventListener("click", () => {
+        state.age = 20;
+        state.weight = 52;
+        state.height = 158;
+        state.lastPeriodDate = getDefaultPeriodDateString();
+        state.cycleLength = 28;
+        state.dietType = "all";
+        state.waterGlassesLogged = 3;
+        state.checkedMealsByDay = {};
+        syncInputsFromState();
+        const m = calculateMetrics();
+        state.selectedCycleDay = m.currentCycleDay;
+        saveState();
+        renderAll();
+        showToast("Sample profile restored!");
+      });
+
+      // Toast Close
+      document.getElementById("closeToastBtn").addEventListener("click", () => {
+        document.getElementById("toastBanner").classList.add("hidden");
+      });
+
+      // Calendar Month Navigation Buttons
+      document.getElementById("prevMonthBtn").addEventListener("click", () => {
+        state.calendarMonth--;
+        if (state.calendarMonth < 0) {
+          state.calendarMonth = 11;
+          state.calendarYear--;
+        }
+        saveState();
+        renderAll();
+      });
+
+      document.getElementById("nextMonthBtn").addEventListener("click", () => {
+        state.calendarMonth++;
+        if (state.calendarMonth > 11) {
+          state.calendarMonth = 0;
+          state.calendarYear++;
+        }
+        saveState();
+        renderAll();
+      });
+
+      document.getElementById("currentMonthBtn").addEventListener("click", () => {
+        const now = new Date();
+        state.calendarYear = now.getFullYear();
+        state.calendarMonth = now.getMonth();
+        saveState();
+        renderAll();
+      });
+
+      // Clear Symptoms Button
+      document.getElementById("clearSymptomsBtn").addEventListener("click", () => {
+        const dayKey = "day_" + state.selectedCycleDay;
+        state.symptomsByDay[dayKey] = [];
+        saveState();
+        renderAll();
+        showToast("Cleared symptoms for Cycle Day " + state.selectedCycleDay);
+      });
+
+      // Grocery Week Selector
+      const grocerySelect = document.getElementById("groceryWeekSelect");
+      if (grocerySelect) {
+        grocerySelect.value = state.selectedGroceryWeek || "1";
+        grocerySelect.addEventListener("change", (e) => {
+          state.selectedGroceryWeek = e.target.value;
+          saveState();
+          const m = calculateMetrics();
+          renderGroceryList(m);
+        });
+      }
+
+      // Copy Grocery List Button (Safe fallback clipboard implementation)
+      document.getElementById("copyGroceryBtn").addEventListener("click", () => {
+        const m = calculateMetrics();
+        const weekName = grocerySelect.options[grocerySelect.selectedIndex].text;
+        let textToCopy = "🛒 RituCare Kerala Grocery List (" + weekName + "):\n" +
+          "• Matta Rice: " + Math.round(160 * m.portionScale * 7) + "g\n" +
+          "• Puttu Podi: " + Math.round(80 * m.portionScale * 7) + "g\n" +
+          "• Cherupayar: " + Math.round(80 * m.portionScale * 7) + "g\n" +
+          "• Kadala: " + Math.round(70 * m.portionScale * 7) + "g\n" +
+          "• Muringayila: 3 bunches\n" +
+          "• Cheera: 2 bunches\n" +
+          "• Nendran Pazham: 7 nos\n" +
+          "• Mathalam: 4 nos\n" +
+          "• Jeerakam & Uluva: 100g each\n" +
+          "• Sharkara & Ellunda: 300g\n";
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(textToCopy).then(() => {
+            showToast("Grocery list copied to clipboard!");
+          }).catch(() => {
+            copyFallback(textToCopy);
+          });
+        } else {
+          copyFallback(textToCopy);
+        }
+      });
+
+      function copyFallback(text) {
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        ta.style.position = "fixed";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.select();
+        try {
+          document.execCommand("copy");
+          showToast("Grocery list copied to clipboard!");
+        } catch (err) {
+          showToast("Could not copy automatically. Please select text manually.");
+        }
+        document.body.removeChild(ta);
+      }
+
+      // Save Cycle Record Button
+      document.getElementById("saveCycleRecordBtn").addEventListener("click", () => {
+        const m = calculateMetrics();
+        const allLoggedSymptoms = [];
+        Object.keys(state.symptomsByDay).forEach((k) => {
+          (state.symptomsByDay[k] || []).forEach((symId) => {
+            const sym = KERALA_SYMPTOM_REMEDIES.find((item) => item.id === symId);
+            if (sym && !allLoggedSymptoms.includes(sym.labelEn)) {
+              allLoggedSymptoms.push(sym.labelEn);
+            }
+          });
+        });
+
+        const newRec = {
+          id: Date.now(),
+          startDate: state.lastPeriodDate,
+          cycleLen: state.cycleLength,
+          nextPeriod: formatShortDate(m.nextPeriodDate),
+          symptoms: allLoggedSymptoms.join(", ") || "Normal cycle",
+          waterAvg: state.waterGlassesLogged + " / " + m.targetGlasses + " glasses"
+        };
+
+        if (!Array.isArray(state.cycleHistory)) state.cycleHistory = [];
+        state.cycleHistory.unshift(newRec);
+        saveState();
+        renderCycleHistory();
+        showToast("Saved cycle record to history!");
+      });
+
+      // Print Summary Button
+      document.getElementById("printSummaryBtn").addEventListener("click", () => {
+        window.print();
+      });
+
+      // Code Guide Toggle
+      document.getElementById("toggleCodeGuideBtn").addEventListener("click", () => {
+        const guide = document.getElementById("codeGuideContent");
+        guide.classList.toggle("hidden");
+      });
+    });
+  </script>
+</body>
+</html>
